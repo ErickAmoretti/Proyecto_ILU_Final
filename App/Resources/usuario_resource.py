@@ -10,10 +10,10 @@ def get_usuario(id):
     try:
         usuario = Usuario.query.get(id)
         if usuario: 
-            return jsonify({Usuario_Schema.dump(usuario)})
+            return jsonify(Usuario_Schema.dump(usuario))
         return jsonify({"message": "User not found"}), 404
     except Exception as e:
-        return jsonify({"message": f"Error_ {str(e)}"}), 500
+        return jsonify({"message": f"Error: {str(e)}"}), 500
     
 def get_usuarios():
     try: 
@@ -67,7 +67,7 @@ def delete_usuario(id):
         return jsonify({"status": "success", "message": f"User with id {id} deleted" }), 200
     except Exception as e:
         db.session.rollback()
-        jsonify({"message": f"Error: {str(e)}"}), 500
+        return jsonify({"message": f"Error: {str(e)}"}), 500
 
 def login():
     try:

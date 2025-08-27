@@ -4,7 +4,7 @@ class TareasSchema(Schema):
     id = fields.Int()
     nombre = fields.Str(required=True)
     descripcion = fields.Str(required=False)
-    estatus = fields.Int(required=True)
+    estatus = fields.Int(required=False)
     id_proyecto = fields.Int(required=True)
 
 Tarea_schema = TareasSchema()

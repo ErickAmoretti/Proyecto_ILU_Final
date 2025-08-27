@@ -8,7 +8,7 @@ def get_proyecto(id):
     try: 
         proyecto = Proyecto.query.get(id)
         if proyecto:
-            return jsonify(proyecto_schema(proyecto))
+            return jsonify(proyecto_schema.dump(proyecto))
         
         return jsonify({"message": "Project not found"}), 404
     
@@ -18,7 +18,7 @@ def get_proyecto(id):
 def get_proyectos():
     try: 
         proyectos = Proyecto.query.all()
-        return jsonify(proyecto_schema.dump(proyectos))
+        return jsonify(proyectos_schema.dump(proyectos))
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
     
@@ -42,7 +42,7 @@ def create_proyecto():
 def update_proyecto(id):
     try: 
         proyecto = Proyecto.query.get(id)
-        data = request.get_json
+        data = request.get_json()
 
         if not data:
             return jsonify({"message": "Error: No data received"}), 400

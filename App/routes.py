@@ -23,7 +23,7 @@ proyecto_bp.route('/projects/<int:id>', methods=['DELETE'])(delete_proyecto)
 
 tarea_bp = Blueprint('Tareas', __name__)
 
-tarea_bp.route('/projects/<int:id>/tasks', methods=['GET'])(get_tarea)
+tarea_bp.route('/projects/task/<int:id>', methods=['GET'])(get_tarea)
 tarea_bp.route('/projects/task', methods=['GET'])(get_tareas)
 tarea_bp.route('/projects/task', methods=['POST'])(create_tarea)
 tarea_bp.route('/projects/task/<int:id>', methods=['PUT'])(update_tarea)
