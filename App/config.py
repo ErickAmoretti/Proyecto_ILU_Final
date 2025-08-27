@@ -1,10 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 
 
-db = SQLAlchemy
+db = SQLAlchemy()
 
 def conf_database(app):
-    app.config['SQL_ALCHEMY_DATABASE_URI'] = \
+    app.config['SQLALCHEMY_DATABASE_URI'] = \
     '{DBMS}://{user}:{password}@{server}/{database}'.format(
         DBMS = 'mariadb+mariadbconnector',
         user= 'usrDev',
