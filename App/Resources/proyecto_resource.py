@@ -2,44 +2,52 @@ from Models.proyecto_model import Proyecto
 from flask import jsonify, request
 from Schemas.proyecto_schema import proyecto_schema, proyectos_schema
 from config import db
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
 @jwt_required()
 def get_proyecto(id):
-    try: 
+    try:
         claims = get_jwt()
-        if claims.get('role') not in ['normal', 'admin']:
-            return jsonify({"message": "Role required"}), 403
-
+        user_id = int(get_jwt_identity())
         proyecto = Proyecto.query.get(id)
-        if proyecto:
-            return jsonify(proyecto_schema.dump(proyecto))
         
-        return jsonify({"message": "Project not found"}), 404
+        if not proyecto:
+            return jsonify({"message": "Project not found"}), 404
+        
+        # Los usuarios normales solo pueden acceder a sus proyectos. Admin puede ver todos
+        if claims.get('role') == 'normal' and proyecto.id_usuario != user_id:
+            return jsonify({"message": "Access denied"}), 403
+            
+        return jsonify(proyecto_schema.dump(proyecto))
     
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
 
-@jwt_required()    
+@jwt_required()
 def get_proyectos():
-    try: 
+    try:
         claims = get_jwt()
-        if claims.get('role') not in ['admin']:
-            return jsonify({"message": "Role required"}), 403
-        proyectos = Proyecto.query.all()
+        user_id = int(get_jwt_identity())
+        
+        if claims.get('role') == 'admin':
+            proyectos = Proyecto.query.all()
+        else:  # normal user
+            proyectos = Proyecto.query.filter_by(id_usuario=user_id).all()
+            
         return jsonify(proyectos_schema.dump(proyectos))
+    
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
 
 @jwt_required()
 def create_proyecto():
-    try: 
+    try:
         claims = get_jwt()
         if claims.get('role') not in ['admin']:
-            return jsonify({"message": "Role required"}), 403
+            return jsonify({"message": "Admin access required"}), 403
         data = request.get_json()
-        if not data: 
-            return jsonify({"message": "Error: No tada received"}), 400
+        if not data:
+            return jsonify({"message": "Error: No data received"}), 400
         
         validate_data = proyecto_schema.load(data)
         proyecto = Proyecto(**validate_data)
@@ -48,20 +56,22 @@ def create_proyecto():
 
         return jsonify({"status": "Success", "data": proyecto_schema.dump(proyecto)}), 201
     
-    except Exception as e: 
+    except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Error: {str(e)}"}), 500
 
 @jwt_required()
 def update_proyecto(id):
-    try: 
+    try:
         claims = get_jwt()
         if claims.get('role') not in ['admin']:
-            return jsonify({"message": "Role required"}), 403
+            return jsonify({"message": "Admin access required"}), 403
         
         proyecto = Proyecto.query.get(id)
+        if not proyecto:
+            return jsonify({"message": "Project not found"}), 404
+            
         data = request.get_json()
-
         if not data:
             return jsonify({"message": "Error: No data received"}), 400
         
@@ -78,12 +88,15 @@ def update_proyecto(id):
 
 @jwt_required()
 def delete_proyecto(id):
-    try: 
+    try:
         claims = get_jwt()
         if claims.get('role') not in ['admin']:
-            return jsonify({"message": "Role required"}), 403
+            return jsonify({"message": "Admin access required"}), 403
         
         proyecto = Proyecto.query.get(id)
+        if not proyecto:
+            return jsonify({"message": "Project not found"}), 404
+            
         db.session.delete(proyecto)
         db.session.commit()
         return jsonify({"status": "Success", "message": f"Project with id {id} deleted"}), 200

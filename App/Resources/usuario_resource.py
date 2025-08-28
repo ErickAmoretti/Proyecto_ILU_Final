@@ -37,7 +37,7 @@ def create_usuario():
         puesto = data['puesto']
         correo = data['correo']
         password = data['password']
-        role = data.get('role', 'normal')  # Default to 'normal'
+        role = data.get('role', 'normal') 
         descripcion = data.get('descripcion', '')
 
         if Usuario.query.filter_by(correo=correo).first():
