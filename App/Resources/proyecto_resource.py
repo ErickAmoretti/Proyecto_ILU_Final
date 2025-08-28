@@ -2,10 +2,15 @@ from Models.proyecto_model import Proyecto
 from flask import jsonify, request
 from Schemas.proyecto_schema import proyecto_schema, proyectos_schema
 from config import db
-# from flask_jwt_extended import create_access_token, jwt_required - Pendiente
+from flask_jwt_extended import jwt_required, get_jwt
 
+@jwt_required()
 def get_proyecto(id):
     try: 
+        claims = get_jwt()
+        if claims.get('role') not in ['normal', 'admin']:
+            return jsonify({"message": "Role required"}), 403
+
         proyecto = Proyecto.query.get(id)
         if proyecto:
             return jsonify(proyecto_schema.dump(proyecto))
@@ -14,16 +19,24 @@ def get_proyecto(id):
     
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
-    
+
+@jwt_required()    
 def get_proyectos():
     try: 
+        claims = get_jwt()
+        if claims.get('role') not in ['admin']:
+            return jsonify({"message": "Role required"}), 403
         proyectos = Proyecto.query.all()
         return jsonify(proyectos_schema.dump(proyectos))
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
-    
+
+@jwt_required()
 def create_proyecto():
     try: 
+        claims = get_jwt()
+        if claims.get('role') not in ['admin']:
+            return jsonify({"message": "Role required"}), 403
         data = request.get_json()
         if not data: 
             return jsonify({"message": "Error: No tada received"}), 400
@@ -38,9 +51,14 @@ def create_proyecto():
     except Exception as e: 
         db.session.rollback()
         return jsonify({"message": f"Error: {str(e)}"}), 500
-    
+
+@jwt_required()
 def update_proyecto(id):
     try: 
+        claims = get_jwt()
+        if claims.get('role') not in ['admin']:
+            return jsonify({"message": "Role required"}), 403
+        
         proyecto = Proyecto.query.get(id)
         data = request.get_json()
 
@@ -57,9 +75,14 @@ def update_proyecto(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Error: {str(e)}"}), 500
-    
+
+@jwt_required()
 def delete_proyecto(id):
     try: 
+        claims = get_jwt()
+        if claims.get('role') not in ['admin']:
+            return jsonify({"message": "Role required"}), 403
+        
         proyecto = Proyecto.query.get(id)
         db.session.delete(proyecto)
         db.session.commit()
