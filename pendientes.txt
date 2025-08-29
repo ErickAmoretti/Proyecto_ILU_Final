@@ -1,0 +1,66 @@
+**Objetivo:** Construir una API REST en Python usando **Flask** y **SQLAlchemy** que permita gestionar usuarios, proyectos y tareas.  
+
+## 🏗️ Tecnologías a utilizar
+- **Python 3.12+**
+- **Flask** (para crear la API REST)
+- **Flask-SQLAlchemy** (ORM para la base de datos)
+- **Flask-Migrate** (migraciones de esquema)
+- **SQLite** (base de datos inicial, luego puede migrarse a MySQL o PostgreSQL)
+- **Marshmallow** (para serialización y validación de datos)
+- **Postman/Insomnia** (para probar la API)
+
+---
+
+## 🔑 Endpoints propuestos
+
+### 🔐 Autenticación
+- `POST /auth/register` → Crear usuario  \
+- `POST /auth/login` → Obtener token JWT  \
+
+### 👤 Usuarios
+- `GET /users` → Listar usuarios (solo admin) \ 
+- `GET /users/<id>` → Ver usuario  \
+- `PUT /users/<id>` → Actualizar usuario  \
+- `DELETE /users/<id>` → Eliminar usuario  \
+
+### 📁 Proyectos
+- `GET /projects` → Listar proyectos  \
+- `POST /projects` → Crear proyecto  \
+- `GET /projects/<id>` → Ver proyecto  \
+- `PUT /projects/<id>` → Actualizar proyecto  \
+- `DELETE /projects/<id>` → Eliminar proyecto  \
+
+### ✅ Tareas
+- `GET /projects/<id>/tasks` → Listar tareas de un proyecto  \
+- `POST /projects/<id>/tasks` → Crear tarea en un proyecto  \
+- `PUT /tasks/<id>` → Actualizar tarea (ej. cambiar `status`)  \
+- `DELETE /tasks/<id>` → Eliminar tarea  \
+
+---
+
+## 📌 Retos para los practicantes
+
+1. **CRUD básico:** Implementar usuarios, proyectos y tareas.  \
+2. **Relaciones en SQLAlchemy:**  
+   - Un usuario puede tener varios proyectos.  \
+   - Un proyecto tiene varias tareas.  \
+   - Una tarea puede asignarse a un usuario.  \
+3. **Autenticación JWT:** Añadir login y proteger rutas.  \
+4. **Roles de usuario:**  
+   - Usuario normal: solo puede ver y gestionar sus tareas y proyectos.  \
+   - Admin: puede ver todos los usuarios y proyectos.  \
+5. **Validaciones con Marshmallow:**  
+   - Emails únicos.  \
+   - No permitir proyectos sin dueño.  \
+   - Status de tarea válido.  \
+6. **Migraciones con Flask-Migrate:** Poder modificar el esquema.  \\
+7. **Documentación con Swagger/OpenAPI:** (opcional).  \\
+
+---
+
+## 📈 Extensiones futuras (para motivar a los juniors)
+- Filtros: listar tareas por estado o usuario asignado.  
+- Paginación en listados.  
+- Búsqueda por nombre de proyecto o tarea.  
+- Notificaciones por correo al asignar una tarea.  
+- Frontend (React o Angular) que consuma la API.  
