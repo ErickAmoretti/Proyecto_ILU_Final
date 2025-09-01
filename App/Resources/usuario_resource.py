@@ -6,6 +6,7 @@ from Models.roles_model import Roles
 import bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 
+
 @jwt_required()
 def get_usuario(id):
     try:
@@ -19,6 +20,7 @@ def get_usuario(id):
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
 
+
 @jwt_required()
 def get_usuarios():
     try:
@@ -30,6 +32,7 @@ def get_usuarios():
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
 
+
 def create_usuario():
     try:
         data = request.get_json()
@@ -37,24 +40,28 @@ def create_usuario():
         puesto = data['puesto']
         correo = data['correo']
         password = data['password']
-        role = data.get('role', 'normal') 
+        role = data.get('role', 'normal')
         descripcion = data.get('descripcion', '')
 
         if Usuario.query.filter_by(correo=correo).first():
             return jsonify({"message": "Email already exists"}), 409
 
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        new_user = Usuario(nombre=nombre, puesto=puesto, correo=correo, password=hashed_password)
+        hashed_password = bcrypt.hashpw(password.encode(
+            'utf-8'), bcrypt.gensalt()).decode('utf-8')
+        new_user = Usuario(nombre=nombre, puesto=puesto,
+                           correo=correo, password=hashed_password)
         db.session.add(new_user)
         db.session.flush()
 
-        new_role = Roles(rol_nombre=role, descripcion=descripcion, id_usuario=new_user.id)
+        new_role = Roles(
+            rol_nombre=role, descripcion=descripcion, id_usuario=new_user.id)
         db.session.add(new_role)
         db.session.commit()
         return jsonify({"message": "User created successfully", "role": role}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Error: {str(e)}"}), 500
+
 
 @jwt_required()
 def update_usuario(id):
@@ -77,7 +84,8 @@ def update_usuario(id):
                 role.rol_nombre = data['role']
                 role.descripcion = data.get('descripcion', role.descripcion)
             else:
-                new_role = Roles(rol_nombre=data['role'], descripcion=data.get('descripcion', ''), id_usuario=id)
+                new_role = Roles(rol_nombre=data['role'], descripcion=data.get(
+                    'descripcion', ''), id_usuario=id)
                 db.session.add(new_role)
 
         db.session.commit()
@@ -85,6 +93,7 @@ def update_usuario(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"Error: {str(e)}"}), 500
+
 
 @jwt_required()
 def delete_usuario(id):
@@ -101,6 +110,7 @@ def delete_usuario(id):
         db.session.rollback()
         return jsonify({"message": f"Error: {str(e)}"}), 500
 
+
 def login():
     try:
         data = request.get_json()
@@ -115,7 +125,7 @@ def login():
                 identity=str(user.id),
                 additional_claims={'role': role_name}
             )
-            return jsonify({"message": "login success", "access_token": access_token, "role": role_name})
+            return jsonify({"message": "login success", "access_token": access_token, "role": role_name, "nombre": user.nombre})
         else:
             return jsonify({"message": "login failed"}), 401
     except Exception as e:

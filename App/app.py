@@ -3,9 +3,10 @@ from flask_jwt_extended import JWTManager
 from config import conf_database, db
 from routes import tarea_bp, usuario_bp, proyecto_bp, roles_bp
 from flask_migrate import Migrate
-
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 jwt = JWTManager(app)
 
 conf_database(app)

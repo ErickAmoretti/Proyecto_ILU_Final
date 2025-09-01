@@ -1,7 +1,7 @@
 **Objetivo:** Construir una API REST en Python usando **Flask** y **SQLAlchemy** que permita gestionar usuarios, proyectos y tareas.  
 
 ## 🏗️ Tecnologías a utilizar
-- **Python 3.12+**
+- **Python 3.12+** 
 - **Flask** (para crear la API REST)
 - **Flask-SQLAlchemy** (ORM para la base de datos)
 - **Flask-Migrate** (migraciones de esquema)
@@ -59,8 +59,8 @@
 ---
 
 ## 📈 Extensiones futuras (para motivar a los juniors)
-- Filtros: listar tareas por estado o usuario asignado.  
+- Filtros: listar tareas por estado o usuario asignado.  \
 - Paginación en listados.  
 - Búsqueda por nombre de proyecto o tarea.  
 - Notificaciones por correo al asignar una tarea.  
-- Frontend (React o Angular) que consuma la API.  
+- Frontend (React o Angular) que consuma la API.  \
